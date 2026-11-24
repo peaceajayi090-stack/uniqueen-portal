@@ -1,48 +1,41 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase";
-import { siteUrl } from "@/lib/config";
 
-async function sendLoginLink(formData: FormData) {
+async function logIn(formData: FormData) {
   "use server";
   const email = String(formData.get("email") || "").trim().toLowerCase();
-  if (!email) redirect("/login?error=email");
+  const password = String(formData.get("password") || "");
+  if (!email || !password) redirect("/login?error=missing");
   const supabase = await supabaseServer();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: `${await siteUrl()}/auth/callback`,
-      shouldCreateUser: false, // only invited clients (and you) can log in
-    },
-  });
-  if (error) redirect("/login?error=send");
-  redirect("/login?sent=1");
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) redirect("/login?error=wrong");
+  redirect("/portal");
 }
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ sent?: string; error?: string }>;
-}) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const sp = await searchParams;
   return (
     <main className="container">
       <div className="auth-box card">
         <h1>Client login</h1>
-        <p className="muted">Enter the email address the studio has on file. We&apos;ll email you a secure login link; no password needed.</p>
-        {sp.sent && <div className="notice ok">Check your inbox (and spam folder) for your login link.</div>}
+        <p className="muted">Log in with the email and password Uniqueen Interiors gave you.</p>
         {sp.error && (
           <div className="notice err">
-            {sp.error === "send"
-              ? "We couldn't send a link to that email. Make sure it's the address Uniqueen Interiors invited."
-              : "Something went wrong. Please try again."}
+            {sp.error === "wrong"
+              ? "That email or password is not correct. Please check and try again, or contact the studio."
+              : "Please enter your email and password."}
           </div>
         )}
-        <form action={sendLoginLink}>
+        <form action={logIn}>
           <div className="field">
             <label htmlFor="email">Email address</label>
-            <input id="email" name="email" type="email" required placeholder="you@example.com" />
+            <input id="email" name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
           </div>
-          <button className="btn full" type="submit">Email me a login link</button>
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input id="password" name="password" type="password" required autoComplete="current-password" />
+          </div>
+          <button className="btn full" type="submit">Log in</button>
         </form>
       </div>
     </main>

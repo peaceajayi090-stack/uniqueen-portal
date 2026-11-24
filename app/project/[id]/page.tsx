@@ -24,7 +24,7 @@ const TABS = [
 const MESSAGES: Record<string, [string, string]> = {
   saved: ["ok", "Saved."],
   submitted: ["ok", "Thank you! Your questionnaire has been sent to Uniqueen Interiors."],
-  created: ["ok", "Project created. Send the client your website link: they log in with the email you entered."],
+  created: ["ok", "Project created. Send the client the website link, their email and password on WhatsApp."],
   paid: ["ok", "Payment received. Thank you!"],
   payfail: ["err", "The payment was not completed. You have not been charged; please try again."],
   error: ["err", "Something went wrong. Please try again."],

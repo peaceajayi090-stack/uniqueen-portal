@@ -13,16 +13,19 @@ async function createClientProject(formData: FormData) {
   const phone = String(formData.get("phone") || "").trim();
   const name = String(formData.get("project_name") || "").trim();
   const address = String(formData.get("address") || "").trim();
+  const password = String(formData.get("password") || "").trim();
   if (!fullName || !email || !name) redirect("/admin?error=missing");
 
-  // Find the client's login, or create one (they then log in with an emailed link)
+  // Find the client's login, or create one with the password you choose
   let clientId: string | undefined;
   const { data: existing } = await db.from("profiles").select("id").eq("email", email).maybeSingle();
   if (existing) {
     clientId = existing.id;
   } else {
+    if (password.length < 6) redirect("/admin?error=" + encodeURIComponent("Password must be at least 6 characters"));
     const { data, error } = await db.auth.admin.createUser({
       email,
+      password,
       email_confirm: true,
       user_metadata: { full_name: fullName },
     });
@@ -140,9 +143,12 @@ export default async function AdminDashboard({
             <div className="field"><label>Client phone / WhatsApp</label><input name="phone" /></div>
             <div className="field"><label>Project name *</label><input name="project_name" required placeholder="e.g. Adeyemi Residence — Living & Dining" /></div>
           </div>
-          <div className="field"><label>Project address</label><input name="address" /></div>
+          <div className="grid two">
+            <div className="field"><label>Project address</label><input name="address" /></div>
+            <div className="field"><label>Client&apos;s password (new clients, at least 6 characters)</label><input name="password" placeholder="e.g. Uniqueen2026" /></div>
+          </div>
           <p className="small muted">
-            After creating the project, send the client your website link. They log in by typing this email address and clicking the link we email them.
+            After creating the project, send the client the website link, their email and this password on WhatsApp.
           </p>
           <button className="btn" type="submit">Create project</button>
         </form>

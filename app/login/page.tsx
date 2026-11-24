@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase";
+import { siteUrl } from "@/lib/config";
 
 async function sendLoginLink(formData: FormData) {
   "use server";
@@ -9,7 +10,7 @@ async function sendLoginLink(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      emailRedirectTo: `${await siteUrl()}/auth/callback`,
       shouldCreateUser: false, // only invited clients (and you) can log in
     },
   });

@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "./supabase";
 import { invoiceTotals } from "./format";
+import { siteUrl } from "./config";
 
 const FLW_API = "https://api.flutterwave.com/v3";
 
@@ -21,7 +22,7 @@ export async function createFlutterwaveCheckout(opts: {
       tx_ref: opts.txRef,
       amount: opts.amount,
       currency: "NGN",
-      redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/pay/callback`,
+      redirect_url: `${await siteUrl()}/api/pay/callback`,
       customer: {
         email: opts.customer.email,
         name: opts.customer.name,

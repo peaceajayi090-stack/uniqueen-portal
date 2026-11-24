@@ -3,6 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 import { STUDIO } from "@/lib/brand";
 import { supabaseServer } from "@/lib/supabase";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: `${STUDIO.name} — Client Portal`,
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {STUDIO.email && <> · {STUDIO.email}</>}
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );

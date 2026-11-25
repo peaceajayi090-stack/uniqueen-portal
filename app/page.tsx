@@ -14,7 +14,8 @@ export default async function Home() {
   return (
     <main className="lux">
       <section className="lux-hero">
-        <div className="container">
+        <div className="container hero-grid">
+          <div>
           <div className="lux-eyebrow">Luxury interior design · Lagos</div>
           <h1 style={{ marginTop: 14 }}>Exceptional interiors, delivered with complete transparency.</h1>
           <hr className="lux-rule" />
@@ -26,6 +27,9 @@ export default async function Home() {
             <Link href="/packages#book" className="btn gold">Book a private consultation</Link>
             <Link href="/packages" className="btn ghost">View packages</Link>
           </div>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/emblem.svg" alt="Uniqueen Interiors emblem" className="hero-emblem" />
         </div>
       </section>
 

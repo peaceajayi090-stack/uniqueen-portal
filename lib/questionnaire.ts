@@ -61,7 +61,7 @@ export const QUESTIONNAIRE: { title: string; questions: Question[] }[] = [
   {
     title: "6. Budget and timeline",
     questions: [
-      { key: "budget", label: "Total budget range", type: "select", options: ["Under ₦5m", "₦5m – ₦15m", "₦15m – ₦30m", "₦30m – ₦60m", "Above ₦60m"] },
+      { key: "budget", label: "Total budget range", type: "select", options: ["Under ₦20m", "₦20m – ₦50m", "₦50m – ₦100m", "₦100m – ₦200m", "Above ₦200m"] },
       { key: "service", label: "Service wanted", type: "select", options: ["Design consultation only", "Full design (I'll use my own contractor)", "Turnkey: design, sourcing and installation"] },
       { key: "deadline", label: "When should it be finished? Is the date fixed?" },
       { key: "decision_maker", label: "Who makes the final decisions?" },

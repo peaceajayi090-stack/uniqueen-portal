@@ -76,21 +76,21 @@ export const PACKAGES = [
   {
     id: "clarity",
     name: "Clarity Session",
-    price: "₦50,000 virtual · ₦100,000 on site",
-    bestFor: "Expert advice before you spend",
+    price: "₦250,000 virtual · ₦400,000 on site in Lagos",
+    bestFor: "Expert direction before you invest",
     includes: ["60-minute consultation", "Space assessment", "Written recommendations within 48 hours", "Fee credited if you book a package within 30 days"],
   },
   {
     id: "refresh",
     name: "Room Refresh (e-design)",
-    price: "₦250,000 per room",
+    price: "₦800,000 per room",
     bestFor: "One room, done by you",
     includes: ["Moodboard and colour palette", "Furniture layout", "Shopping list with prices", "2 3D views", "1 revision"],
   },
   {
     id: "signature",
     name: "Signature Design",
-    price: "₦450,000 per room · ₦8,000 per m² for whole homes",
+    price: "₦1,500,000 per room · ₦25,000 per m² for whole homes (min. ₦5,000,000)",
     bestFor: "Clients with their own contractor",
     includes: ["Full 12-document drawing set", "3D renders", "Material list and BOQ", "2 revisions", "Your own client portal"],
     featured: true,
@@ -98,25 +98,25 @@ export const PACKAGES = [
   {
     id: "turnkey",
     name: "Turnkey Complete",
-    price: "Design fee + 15% of BOQ (min. ₦1,500,000)",
-    bestFor: "Busy clients and Nigerians abroad",
+    price: "Design fee + 20% of BOQ (min. ₦10,000,000)",
+    bestFor: "Busy executives and Nigerians abroad",
     includes: ["Everything in Signature Design", "Procurement and order tracking", "Contractor supervision", "Styling and handover", "Weekly portal updates"],
   },
   {
     id: "shortlet",
     name: "Short-let Ready",
-    price: "From ₦2,500,000 per apartment + furnishing",
-    bestFor: "Airbnb and short-let investors",
+    price: "From ₦6,000,000 per apartment + furnishing",
+    bestFor: "Luxury short-let and Airbnb investors",
     includes: ["Guest-proof design", "Furnishing and styling", "Listing photos", "Inventory list"],
   },
 ] as const;
 
 export const ADD_ONS = [
-  ["Extra 3D render", "₦40,000"],
-  ["Extra revision round", "₦75,000"],
-  ["Extra site visit", "₦50,000"],
-  ["Rush delivery", "+25%"],
-  ["6-month refresh plan (2 styling visits)", "₦200,000"],
+  ["Extra 3D render", "₦150,000"],
+  ["Extra revision round", "₦250,000"],
+  ["Extra site visit (Lagos)", "₦150,000"],
+  ["Rush delivery", "+30%"],
+  ["6-month refresh plan (2 styling visits)", "₦750,000"],
 ] as const;
 
 export const LEAD_STATUSES = ["New", "Contacted", "Booked", "Won", "Lost"] as const;

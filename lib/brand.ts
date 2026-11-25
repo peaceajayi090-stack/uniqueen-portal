@@ -1,8 +1,8 @@
 export const STUDIO = {
   name: "Uniqueen Interiors",
   tagline: "Modern, functional and personal interiors across Nigeria",
-  phone: process.env.NEXT_PUBLIC_STUDIO_PHONE || "",
-  email: process.env.NEXT_PUBLIC_STUDIO_EMAIL || "",
+  phone: process.env.NEXT_PUBLIC_STUDIO_PHONE || "+234 903 465 6323",
+  email: process.env.NEXT_PUBLIC_STUDIO_EMAIL || "peaceajayi090@gmail.com",
   bank: {
     name: process.env.NEXT_PUBLIC_BANK_NAME || "",
     accountName: process.env.NEXT_PUBLIC_BANK_ACCOUNT_NAME || "Uniqueen Interiors",

@@ -29,7 +29,9 @@ export async function supabaseServer() {
 
 /** Full-access client for trusted server code only (inviting clients, recording payments). */
 export function supabaseAdmin() {
-  return createClient(SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set in Vercel (needed only to confirm online payments)");
+  return createClient(SUPABASE_URL, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabase";
 import { PACKAGES, ADD_ONS, STUDIO } from "@/lib/brand";
 
 export const metadata = { title: "Packages & pricing — Uniqueen Interiors" };
@@ -11,7 +11,7 @@ async function bookConsultation(formData: FormData) {
   const name = g("name");
   const phone = g("phone");
   if (!name || (!phone && !g("email"))) redirect("/packages?error=1#book");
-  const { error } = await supabaseAdmin().from("leads").insert({
+  const { error } = await (await supabaseServer()).from("leads").insert({
     name,
     email: g("email") || null,
     phone: phone || null,

@@ -228,3 +228,7 @@ drop policy if exists "admin all" on public.testimonials;
 create policy "admin all" on public.testimonials for all using (public.is_admin()) with check (public.is_admin());
 insert into storage.buckets (id, name, public, file_size_limit)
 values ('portfolio', 'portfolio', true, 20971520) on conflict (id) do nothing;
+
+-- ── Version 4: the portal works without the service-role key ──
+-- admin_create_client_project(), client_approve_update(), public booking inserts,
+-- client file uploads and storage rules. Applied as migration "v4_no_service_key".

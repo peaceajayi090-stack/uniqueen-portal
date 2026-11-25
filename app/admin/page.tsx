@@ -1,56 +1,25 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { requireAdmin, supabaseAdmin } from "@/lib/supabase";
+import { requireAdmin } from "@/lib/supabase";
 import { STAGES } from "@/lib/brand";
 import { naira, date, invoiceTotals } from "@/lib/format";
 import AdminNav from "./AdminNav";
 
 async function createClientProject(formData: FormData) {
   "use server";
-  await requireAdmin();
-  const db = supabaseAdmin();
-  const fullName = String(formData.get("full_name") || "").trim();
-  const email = String(formData.get("email") || "").trim().toLowerCase();
-  const phone = String(formData.get("phone") || "").trim();
-  const name = String(formData.get("project_name") || "").trim();
-  const address = String(formData.get("address") || "").trim();
-  const password = String(formData.get("password") || "").trim();
-  if (!fullName || !email || !name) redirect("/admin?error=missing");
-
-  // Find the client's login, or create one with the password you choose
-  let clientId: string | undefined;
-  const { data: existing } = await db.from("profiles").select("id").eq("email", email).maybeSingle();
-  if (existing) {
-    clientId = existing.id;
-  } else {
-    if (password.length < 6) redirect("/admin?error=" + encodeURIComponent("Password must be at least 6 characters"));
-    const { data, error } = await db.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name: fullName },
-    });
-    if (error) redirect(`/admin?error=${encodeURIComponent(error.message)}`);
-    clientId = data.user?.id;
-  }
-  if (!clientId) redirect("/admin?error=client");
-
-  await db.from("profiles").upsert({ id: clientId, email, full_name: fullName, phone: phone || null, role: "client" });
-
-  const { data: project, error } = await db
-    .from("projects")
-    .insert({ client_id: clientId, name, address: address || null, start_date: new Date().toISOString().slice(0, 10) })
-    .select("id")
-    .single();
-  if (error || !project) redirect(`/admin?error=${encodeURIComponent(error?.message || "project")}`);
-
-  await db.from("questionnaires").insert({ project_id: project.id, answers: { full_name: fullName, phone } });
-  await db.from("updates").insert({
-    project_id: project.id,
-    title: "Welcome to Uniqueen Interiors",
-    body: "Your project portal is ready. Please start by filling in the questionnaire and reading the welcome guide.",
+  const { supabase } = await requireAdmin();
+  const g = (k: string) => String(formData.get(k) || "").trim();
+  if (!g("full_name") || !g("email") || !g("project_name")) redirect("/admin?error=" + encodeURIComponent("Please fill in the client name, email and project name"));
+  const { data: projectId, error } = await supabase.rpc("admin_create_client_project", {
+    p_full_name: g("full_name"),
+    p_email: g("email").toLowerCase(),
+    p_phone: g("phone"),
+    p_password: g("password"),
+    p_project_name: g("project_name"),
+    p_address: g("address"),
   });
-  redirect(`/project/${project.id}?msg=created`);
+  if (error || !projectId) redirect(`/admin?error=${encodeURIComponent(error?.message || "Could not create the project")}`);
+  redirect(`/project/${projectId}?msg=created`);
 }
 
 export default async function AdminDashboard({

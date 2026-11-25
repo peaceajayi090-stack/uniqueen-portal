@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabase";
 import { FILE_CATEGORIES } from "@/lib/brand";
 import { date } from "@/lib/format";
 import FileUploader from "@/components/FileUploader";
@@ -12,7 +12,7 @@ export default async function Files({ projectId, files, isAdmin }: { projectId: 
   // Private links that work for 1 hour
   const urls: Record<string, string> = {};
   if (files.length) {
-    const { data } = await supabaseAdmin().storage.from("project-files").createSignedUrls(files.map((f) => f.path), 3600);
+    const { data } = await (await supabaseServer()).storage.from("project-files").createSignedUrls(files.map((f) => f.path), 3600);
     (data || []).forEach((d) => { if (d.path && d.signedUrl) urls[d.path] = d.signedUrl; });
   }
   const groups = FILE_CATEGORIES.filter((c) => files.some((f) => f.category === c));

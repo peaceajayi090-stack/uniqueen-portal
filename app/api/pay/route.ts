@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   const { data: profile } = await supabase.from("profiles").select("full_name, phone, email").eq("id", user.id).single();
   const txRef = `UQI-${inv.number}-${Date.now()}`;
 
-  await supabaseAdmin().from("payments").insert({
+  await supabase.from("payments").insert({
     invoice_id: inv.id,
     tx_ref: txRef,
     amount: t.balance,
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.redirect(link, { status: 303 });
   } catch {
-    await supabaseAdmin().from("payments").update({ status: "failed" }).eq("tx_ref", txRef);
+    try { await supabaseAdmin().from("payments").update({ status: "failed" }).eq("tx_ref", txRef); } catch {}
     return NextResponse.redirect(new URL(`/project/${projectId}?tab=invoices&msg=payfail`, request.url), { status: 303 });
   }
 }

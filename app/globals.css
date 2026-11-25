@@ -105,7 +105,7 @@ tr.total td { font-weight: 700; border-top: 2px solid var(--brown); }
 .update .when { font-size: 12px; color: var(--muted); }
 
 .auth-box { max-width: 420px; margin: 60px auto; }
-footer { border-top: 1px solid var(--line); padding: 20px 0; font-size: 13px; color: var(--muted); }
+footer { background: #14110f; border-top: 1px solid #2b241e; padding: 22px 0; font-size: 13px; color: #a8998a; }
 
 @media print {
   .topbar, .tabs, .no-print, footer { display: none !important; }
@@ -117,3 +117,53 @@ footer { border-top: 1px solid var(--line); padding: 20px 0; font-size: 13px; co
   .hero h1 { font-size: 2rem; }
   .card { padding: 16px; }
 }
+
+/* ───────── Luxury public pages ───────── */
+.lux { background: #14110f; color: #efe6da; }
+.lux h1, .lux h2, .lux h3 { color: #f6efe5; }
+.lux .muted, .lux .lux-muted { color: #a8998a; }
+.lux a { color: #d9b878; }
+.lux-gold { color: #c9a35c; }
+.lux-rule { width: 64px; height: 2px; background: #c9a35c; border: 0; margin: 14px 0 22px; }
+.lux-eyebrow { text-transform: uppercase; letter-spacing: 3px; font-size: 12px; color: #c9a35c; font-weight: 600; }
+.lux-hero { padding: 110px 0 90px; background: radial-gradient(ellipse at 70% 0%, #2a211a 0%, #14110f 60%); }
+.lux-hero h1 { font-size: 3.2rem; max-width: 720px; letter-spacing: 0.3px; }
+.lux-hero p { font-size: 1.1rem; max-width: 560px; color: #cbbcaa; }
+.lux-section { padding: 70px 0; border-top: 1px solid #2b241e; }
+.btn.gold { background: #c9a35c; color: #14110f; }
+.btn.gold:hover { background: #d9b878; }
+.btn.ghost { background: transparent; color: #efe6da; border: 1px solid #6d5b48; }
+.btn.ghost:hover { border-color: #c9a35c; color: #c9a35c; background: transparent; }
+.lux-card { background: #1c1815; border: 1px solid #2f2721; border-radius: 4px; padding: 28px; }
+.lux-card.featured { border-color: #c9a35c; box-shadow: 0 0 0 1px #c9a35c inset; }
+.lux-card ul { padding-left: 0; list-style: none; margin: 14px 0 20px; }
+.lux-card li { padding: 7px 0; border-bottom: 1px solid #2b241e; font-size: 14px; color: #cbbcaa; }
+.lux-card li::before { content: "—  "; color: #c9a35c; }
+.lux-price { font-family: "Playfair Display", Georgia, serif; font-size: 1.25rem; color: #c9a35c; margin: 6px 0 4px; }
+.lux-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: #2b241e; border: 1px solid #2b241e; }
+.lux-stats div { background: #14110f; padding: 26px 20px; }
+.lux-stats strong { display: block; font-family: "Playfair Display", Georgia, serif; font-size: 1.5rem; color: #c9a35c; font-weight: 600; }
+.lux-stats span { font-size: 13px; color: #a8998a; }
+.portfolio { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.portfolio figure { margin: 0; position: relative; overflow: hidden; aspect-ratio: 4 / 5; background: linear-gradient(160deg, #2a211a, #1a1512); }
+.portfolio img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+.portfolio figure:hover img { transform: scale(1.04); }
+.portfolio figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 18px 16px; background: linear-gradient(transparent, rgba(10, 8, 6, 0.85)); color: #f6efe5; }
+.portfolio figcaption small { display: block; color: #c9a35c; letter-spacing: 2px; text-transform: uppercase; font-size: 11px; }
+.portfolio .placeholder { display: flex; align-items: center; justify-content: center; height: 100%; color: #6d5b48; font-family: "Playfair Display", Georgia, serif; font-size: 1.1rem; text-align: center; padding: 20px; }
+.quote { font-family: "Playfair Display", Georgia, serif; font-size: 1.2rem; line-height: 1.5; color: #efe6da; }
+.lux input, .lux select, .lux textarea { background: #1c1815; border-color: #3a3029; color: #efe6da; }
+.lux label { color: #a8998a; }
+.lux table td { border-color: #2b241e; color: #cbbcaa; }
+.lux .notice.ok { background: #1f2a22; color: #9fd1b0; }
+.lux .notice.err { background: #2e1d19; color: #e6a597; }
+.topbar { background: #14110f; border-bottom-color: #2b241e; }
+.topbar .logo { color: #f6efe5; }
+.topbar .logo span { color: #c9a35c; }
+.topbar nav a { color: #efe6da; }
+.topbar .btn.small { background: #c9a35c; color: #14110f; }
+.topbar .btn.small.secondary { background: transparent; color: #efe6da; border-color: #6d5b48; }
+@media (max-width: 600px) { .lux-hero { padding: 70px 0 60px; } .lux-hero h1 { font-size: 2.2rem; } .lux-section { padding: 48px 0; } }
+
+.process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+@media (max-width: 800px) { .process-grid { grid-template-columns: 1fr; } }

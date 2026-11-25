@@ -206,3 +206,25 @@ drop policy if exists "client reads own" on public.project_files;
 create policy "client reads own" on public.project_files for select using (public.owns_project(project_id));
 insert into storage.buckets (id, name, public, file_size_limit)
 values ('project-files', 'project-files', false, 52428800) on conflict (id) do nothing;
+
+-- ── Version 3: portfolio and testimonials (shown publicly on the home page) ──
+create table if not exists public.portfolio_items (
+  id uuid primary key default gen_random_uuid(), title text not null, location text, category text,
+  image_path text not null, position int not null default 0, created_at timestamptz not null default now()
+);
+alter table public.portfolio_items enable row level security;
+drop policy if exists "public reads" on public.portfolio_items;
+create policy "public reads" on public.portfolio_items for select using (true);
+drop policy if exists "admin all" on public.portfolio_items;
+create policy "admin all" on public.portfolio_items for all using (public.is_admin()) with check (public.is_admin());
+create table if not exists public.testimonials (
+  id uuid primary key default gen_random_uuid(), client_name text not null, detail text, quote text not null,
+  created_at timestamptz not null default now()
+);
+alter table public.testimonials enable row level security;
+drop policy if exists "public reads" on public.testimonials;
+create policy "public reads" on public.testimonials for select using (true);
+drop policy if exists "admin all" on public.testimonials;
+create policy "admin all" on public.testimonials for all using (public.is_admin()) with check (public.is_admin());
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('portfolio', 'portfolio', true, 20971520) on conflict (id) do nothing;

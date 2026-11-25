@@ -1,9 +1,10 @@
 import Link from "next/link";
 
-export default function AdminNav({ active }: { active: "dashboard" | "leads" | "assistant" }) {
+export default function AdminNav({ active }: { active: "dashboard" | "leads" | "portfolio" | "assistant" }) {
   const items = [
     ["dashboard", "/admin", "Projects"],
     ["leads", "/admin/leads", "Leads"],
+    ["portfolio", "/admin/portfolio", "Portfolio"],
     ["assistant", "/admin/assistant", "AI assistant"],
   ] as const;
   return (

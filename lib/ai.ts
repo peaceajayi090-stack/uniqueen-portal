@@ -3,17 +3,47 @@ import { invoiceTotals, naira } from "./format";
 
 export type ChatMessage = { role: "user" | "assistant"; content: string };
 
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
+/**
+ * The assistant works with any of these keys (add ONE in Vercel → Settings → Environment Variables):
+ *  - GEMINI_API_KEY    free, from aistudio.google.com/apikey (no card needed)
+ *  - GROQ_API_KEY      free, from console.groq.com/keys (no card needed)
+ *  - ANTHROPIC_API_KEY paid, from console.anthropic.com
+ */
+async function openAiCompatible(url: string, key: string, models: string[], system: string, messages: ChatMessage[]) {
+  let lastError = "";
+  for (const model of models) {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "content-type": "application/json" },
+      body: JSON.stringify({ model, max_tokens: 2000, messages: [{ role: "system", content: system }, ...messages] }),
+    });
+    const json = await res.json().catch(() => null);
+    const data = Array.isArray(json) ? json[0] : json;
+    if (res.ok) return (data?.choices?.[0]?.message?.content || "").trim();
+    lastError = data?.error?.message || String(res.status);
+    if (res.status === 429) return "The free AI limit has been reached for now. Please try again in a minute (or tomorrow if the daily limit is used up).";
+    if (res.status !== 404 && res.status !== 400) break; // only try the next model name if this one isn't available
+  }
+  return `The assistant couldn't answer right now (${lastError}). Please try again.`;
+}
 
 export async function askClaude(system: string, messages: ChatMessage[]) {
+  if (process.env.GEMINI_API_KEY) {
+    const models = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash"].filter(Boolean) as string[];
+    return openAiCompatible("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", process.env.GEMINI_API_KEY, models, system, messages);
+  }
+  if (process.env.GROQ_API_KEY) {
+    const models = [process.env.GROQ_MODEL, "openai/gpt-oss-120b", "llama-3.3-70b-versatile"].filter(Boolean) as string[];
+    return openAiCompatible("https://api.groq.com/openai/v1/chat/completions", process.env.GROQ_API_KEY, models, system, messages);
+  }
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) {
-    return "The AI assistant isn't switched on yet. Add an ANTHROPIC_API_KEY in Vercel → Settings → Environment Variables, then redeploy.";
+    return "The AI assistant isn't switched on yet. Add a free GEMINI_API_KEY (from aistudio.google.com/apikey) in Vercel → Settings → Environment Variables, then redeploy.";
   }
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({ model: MODEL, max_tokens: 2000, system, messages }),
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5", max_tokens: 2000, system, messages }),
   });
   const json = await res.json().catch(() => null);
   if (!res.ok) return `The assistant couldn't answer right now (${json?.error?.message || res.status}). Please try again.`;

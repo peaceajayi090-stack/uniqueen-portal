@@ -49,10 +49,11 @@ Buy `uniqueeninteriors.com` from any registrar (e.g. Namecheap or Whogohost), th
 
 ---
 
-## AI assistant (optional)
-1. Create an API key at [console.anthropic.com](https://console.anthropic.com) (Settings → API Keys) and add a little credit under Billing.
-2. In **Vercel → Settings → Environment Variables**, add `ANTHROPIC_API_KEY` with that key, then **Redeploy**.
-The studio assistant is at `/admin/assistant`; clients get an **Ask assistant** tab in their project.
+## AI assistant (free)
+1. Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey), sign in with Google and tap **Create API key** (free, no card).
+2. In **Vercel → Settings → Environment Variables**, add `GEMINI_API_KEY` with that key, then **Redeploy**.
+Alternatives: `GROQ_API_KEY` (free, console.groq.com) or `ANTHROPIC_API_KEY` (paid).
+Note: on Google's free tier, Google may use the prompts to improve its products, so avoid typing sensitive client details (bank numbers, home security details) into the assistant.
 
 ## Daily use
 1. Open your site and click **Client login**. Enter your email and click the link that arrives. You land on the **dashboard**.

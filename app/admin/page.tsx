@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin, supabaseAdmin } from "@/lib/supabase";
 import { STAGES } from "@/lib/brand";
 import { naira, date, invoiceTotals } from "@/lib/format";
+import AdminNav from "./AdminNav";
 
 async function createClientProject(formData: FormData) {
   "use server";
@@ -88,6 +89,7 @@ export default async function AdminDashboard({
 
   return (
     <main className="container page">
+      <AdminNav active="dashboard" />
       <h1>Studio dashboard</h1>
       <p className="muted">Welcome back{profile.full_name ? `, ${profile.full_name}` : ""}. Every client project is below.</p>
 

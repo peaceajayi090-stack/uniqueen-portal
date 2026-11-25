@@ -49,6 +49,11 @@ Buy `uniqueeninteriors.com` from any registrar (e.g. Namecheap or Whogohost), th
 
 ---
 
+## AI assistant (optional)
+1. Create an API key at [console.anthropic.com](https://console.anthropic.com) (Settings → API Keys) and add a little credit under Billing.
+2. In **Vercel → Settings → Environment Variables**, add `ANTHROPIC_API_KEY` with that key, then **Redeploy**.
+The studio assistant is at `/admin/assistant`; clients get an **Ask assistant** tab in their project.
+
 ## Daily use
 1. Open your site and click **Client login**. Enter your email and click the link that arrives. You land on the **dashboard**.
 2. **Add a new client project** with the client's name, email, phone and project name.

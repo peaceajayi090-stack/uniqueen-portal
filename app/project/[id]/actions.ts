@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireAdmin, requireUser } from "@/lib/supabase";
+import { requireAdmin, requireUser, supabaseAdmin } from "@/lib/supabase";
 import { QUESTION_KEYS } from "@/lib/questionnaire";
 
 const s = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
@@ -60,7 +60,12 @@ export async function saveQuestionnaire(formData: FormData) {
 export async function postUpdate(formData: FormData) {
   const { supabase } = await requireAdmin();
   const id = s(formData, "project_id");
-  await supabase.from("updates").insert({ project_id: id, title: s(formData, "title"), body: orNull(s(formData, "body")) });
+  await supabase.from("updates").insert({
+    project_id: id,
+    title: s(formData, "title"),
+    body: orNull(s(formData, "body")),
+    needs_approval: formData.get("needs_approval") === "on",
+  });
   back(id, "updates", "saved");
 }
 
@@ -192,4 +197,55 @@ export async function deleteBoqItem(formData: FormData) {
   const id = s(formData, "project_id");
   await supabase.from("boq_items").delete().eq("id", s(formData, "item_id"));
   back(id, "boq");
+}
+
+// ── Approvals ──
+export async function approveUpdate(formData: FormData) {
+  const { supabase } = await requireUser();
+  const id = s(formData, "project_id");
+  const updateId = s(formData, "update_id");
+  // Reading through the client's own permissions proves this update belongs to their project
+  const { data: u } = await supabase.from("updates").select("id, needs_approval, approved_at").eq("id", updateId).single();
+  if (!u || !u.needs_approval || u.approved_at) back(id, "updates");
+  await supabaseAdmin()
+    .from("updates")
+    .update({ approved_at: new Date().toISOString(), approval_note: orNull(s(formData, "note")) })
+    .eq("id", updateId);
+  back(id, "updates", "approved");
+}
+
+// ── Files ──
+async function assertProjectAccess(projectId: string) {
+  const ctx = await requireUser();
+  const { data } = await ctx.supabase.from("projects").select("id").eq("id", projectId).single();
+  if (!data) throw new Error("No access to this project");
+  return ctx;
+}
+
+export async function getUploadUrl(projectId: string, fileName: string) {
+  await assertProjectAccess(projectId);
+  const safe = fileName.replace(/[^a-zA-Z0-9._-]+/g, "-").slice(-80);
+  const path = `${projectId}/${Date.now()}-${safe}`;
+  const { data, error } = await supabaseAdmin().storage.from("project-files").createSignedUploadUrl(path);
+  if (error || !data) throw new Error(error?.message || "Could not prepare upload");
+  return { path: data.path, token: data.token };
+}
+
+export async function recordFile(projectId: string, name: string, path: string, category: string, size: number) {
+  const { user } = await assertProjectAccess(projectId);
+  if (!path.startsWith(`${projectId}/`)) throw new Error("Invalid path");
+  await supabaseAdmin().from("project_files").insert({ project_id: projectId, name, path, category, size_bytes: size, uploaded_by: user.id });
+  revalidatePath(`/project/${projectId}`);
+}
+
+export async function deleteFile(formData: FormData) {
+  await requireAdmin();
+  const id = s(formData, "project_id");
+  const db = supabaseAdmin();
+  const { data: f } = await db.from("project_files").select("path").eq("id", s(formData, "file_id")).single();
+  if (f) {
+    await db.storage.from("project-files").remove([f.path]);
+    await db.from("project_files").delete().eq("id", s(formData, "file_id"));
+  }
+  back(id, "files");
 }

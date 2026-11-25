@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/env";
 
 // Keeps the login session fresh on every page visit.
 export async function middleware(request: NextRequest) {

@@ -31,6 +31,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               Uniqueen <span>Interiors</span>
             </Link>
             <nav>
+              <Link href="/packages">Packages</Link>
               {user ? (
                 <>
                   <Link href="/portal">My portal</Link>

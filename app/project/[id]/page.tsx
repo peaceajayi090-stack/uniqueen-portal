@@ -10,15 +10,19 @@ import Invoices from "./sections/Invoices";
 import Orders from "./sections/Orders";
 import Boq from "./sections/Boq";
 import WelcomeGuide from "./sections/WelcomeGuide";
+import Files from "./sections/Files";
+import Chat from "@/components/Chat";
 
 const TABS = [
   ["overview", "Overview"],
   ["guide", "Welcome guide"],
   ["questionnaire", "Questionnaire"],
   ["updates", "Updates"],
+  ["files", "Files"],
   ["invoices", "Invoices & payments"],
   ["orders", "Orders"],
   ["boq", "Costing (BOQ)"],
+  ["help", "Ask assistant"],
 ] as const;
 
 const MESSAGES: Record<string, [string, string]> = {
@@ -26,6 +30,7 @@ const MESSAGES: Record<string, [string, string]> = {
   submitted: ["ok", "Thank you! Your questionnaire has been sent to Uniqueen Interiors."],
   created: ["ok", "Project created. Send the client the website link, their email and password on WhatsApp."],
   paid: ["ok", "Payment received. Thank you!"],
+  approved: ["ok", "Thank you! Your approval has been recorded and the studio has been notified in the portal."],
   payfail: ["err", "The payment was not completed. You have not been charged; please try again."],
   error: ["err", "Something went wrong. Please try again."],
 };
@@ -50,7 +55,7 @@ export default async function ProjectPage({
     .single();
   if (!project) notFound();
 
-  const [q, updates, invoices, orders, boq] = await Promise.all([
+  const [q, updates, invoices, orders, boq, files] = await Promise.all([
     supabase.from("questionnaires").select("*").eq("project_id", id).maybeSingle(),
     supabase.from("updates").select("*").eq("project_id", id).order("created_at", { ascending: false }),
     supabase
@@ -60,7 +65,9 @@ export default async function ProjectPage({
       .order("created_at", { ascending: false }),
     supabase.from("orders").select("*").eq("project_id", id).order("created_at", { ascending: true }),
     supabase.from("boq_items").select("*").eq("project_id", id).order("created_at", { ascending: true }),
+    supabase.from("project_files").select("*").eq("project_id", id).order("created_at", { ascending: false }),
   ]);
+  const awaiting = (updates.data || []).filter((u: any) => u.needs_approval && !u.approved_at).length;
 
   const client = (project as any).profiles;
   const invoiceList = (invoices.data || []) as any[];
@@ -97,6 +104,7 @@ export default async function ProjectPage({
         {TABS.map(([k, label]) => (
           <Link key={k} href={`/project/${id}?tab=${k}`} className={tab === k ? "active" : ""}>
             {label}
+            {k === "updates" && awaiting > 0 && <span className="pill gold" style={{ marginLeft: 6 }}>{awaiting}</span>}
           </Link>
         ))}
       </nav>
@@ -121,6 +129,21 @@ export default async function ProjectPage({
       {tab === "invoices" && <Invoices projectId={id} invoices={invoiceList} isAdmin={isAdmin} client={client} project={project} />}
       {tab === "orders" && <Orders projectId={id} orders={orders.data || []} isAdmin={isAdmin} />}
       {tab === "boq" && <Boq projectId={id} items={boq.data || []} isAdmin={isAdmin} />}
+      {tab === "files" && <Files projectId={id} files={files.data || []} isAdmin={isAdmin} />}
+      {tab === "help" &&
+        (isAdmin ? (
+          <div className="card">
+            <p>The studio assistant can use this project&apos;s brief, BOQ, orders and invoices to draft budgets, design ideas and client messages.</p>
+            <Link href={`/admin/assistant?project=${id}`} className="btn">Open the studio assistant for this project</Link>
+          </div>
+        ) : (
+          <Chat
+            scope="client"
+            projectId={id}
+            intro="Hi! I'm the Uniqueen assistant. Ask me anything about your project, invoices, orders or how the process works."
+            starters={["What stage is my project at?", "How much do I still owe?", "When will my furniture arrive?", "What happens next?"]}
+          />
+        ))}
     </main>
   );
 }

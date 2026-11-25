@@ -178,3 +178,31 @@ create policy "client reads own" on public.payments for select using (exists (se
 
 -- Make yourself admin (after creating your user in Authentication > Users):
 -- update public.profiles set role = 'admin' where email = 'you@example.com';
+
+-- ── Version 2: leads, approvals, files ──
+create table if not exists public.leads (
+  id uuid primary key default gen_random_uuid(),
+  name text not null, email text, phone text, package text, location text,
+  preferred_date date, message text, status text not null default 'New', notes text,
+  created_at timestamptz not null default now()
+);
+alter table public.leads enable row level security;
+drop policy if exists "admin all" on public.leads;
+create policy "admin all" on public.leads for all using (public.is_admin()) with check (public.is_admin());
+alter table public.updates add column if not exists needs_approval boolean not null default false;
+alter table public.updates add column if not exists approved_at timestamptz;
+alter table public.updates add column if not exists approval_note text;
+create table if not exists public.project_files (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references public.projects on delete cascade,
+  name text not null, path text not null unique, category text not null default 'Other',
+  size_bytes bigint, uploaded_by uuid references public.profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+alter table public.project_files enable row level security;
+drop policy if exists "admin all" on public.project_files;
+create policy "admin all" on public.project_files for all using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "client reads own" on public.project_files;
+create policy "client reads own" on public.project_files for select using (public.owns_project(project_id));
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('project-files', 'project-files', false, 52428800) on conflict (id) do nothing;

@@ -8,7 +8,10 @@ export default function Home() {
         <div className="container">
           <h1>{STUDIO.name}</h1>
           <p>{STUDIO.tagline}. Follow your project, fill in your brief, see your invoices and pay online, all in one place.</p>
-          <Link href="/login" className="btn">Go to your client portal</Link>
+          <div className="row">
+            <Link href="/packages" className="btn">See packages &amp; book</Link>
+            <Link href="/login" className="btn" style={{ background: "transparent", color: "#fff", border: "1px solid #fff" }}>Client login</Link>
+          </div>
         </div>
       </section>
 

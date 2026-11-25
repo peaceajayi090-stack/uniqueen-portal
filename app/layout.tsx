@@ -27,8 +27,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <header className="topbar">
           <div className="container">
-            <Link href="/" className="logo">
-              Uniqueen <span>Interiors</span>
+            <Link href="/" className="logo" aria-label="Uniqueen Interiors home">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.svg" alt="Uniqueen Interiors" style={{ height: 44, width: "auto", display: "block" }} />
             </Link>
             <nav>
               <Link href="/packages">Packages</Link>
